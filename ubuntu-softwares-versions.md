@@ -1,7 +1,3 @@
-
-# About
-This project shows versions of main softwares in several versions of Linux Ubuntu Server.
-
 # Softwares and versions
 
 | **Software** | **14.04.6** | **16.04.7** | **18.04.5** | **20.04.1** |
