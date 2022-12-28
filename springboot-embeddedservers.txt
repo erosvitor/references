@@ -1,0 +1,206 @@
+
+====================================================================================================
+SPRING BOOT - EMBEDDED SERVERS
+====================================================================================================
+
+Introdução
+----------------------------------------------------------------------------------------------------
+O Spring Boot suporta nativamente os servidores de aplicação Tomcat, Jetty e Undertown.
+
+
+Criando o projeto
+----------------------------------------------------------------------------------------------------
+- Abrir o Spring Tool Suite
+
+- Criar um projeto 'Spring Starter Project' utilizando os seguintes dados:
+
+  Name: spring-boot-embeddedservers
+  Type: Maven Project
+  Packaging: jar
+  Java Version: 17
+  Language: Java
+  Group: com.ctseducare
+  Artifact: embeddedservers
+  Version: 1.0.0-SNAPSHOT
+
+- Adicionar as seguintes dependencias:
+
+  - Spring Web
+
+
+Criando o controller
+----------------------------------------------------------------------------------------------------
+- Criar o pacote 'com.ctseducare.embeddedservers.controller'
+
+- Criar a classe 'EmbeddedServerController' com o conteúdo abaixo
+
+@RestController
+public class EmbeddedServerController {
+
+  @GetMapping("/")
+  String status() {
+    return "I am up!";
+  }
+  
+}
+
+- Testando a aplicação
+
+  - Iniciar a aplicação
+  
+  - Acessar a aplicação pela URL
+
+    http://localhost:8080
+
+
+Substituindo o Tomcat pelo Jetty
+----------------------------------------------------------------------------------------------------
+- Remover a dependência do Tomcat do starter Web
+
+    ...
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    ...
+
+- Adicionar a dependência do Jetty
+
+    ...
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jetty</artifactId>
+    </dependency>
+    ...
+
+- Testando a aplicação
+
+  - Iniciar a aplicação
+  
+  - Acessar a aplicação pela URL
+
+    http://localhost:8080
+
+
+Gerenciando mútiplos servidores
+----------------------------------------------------------------------------------------------------
+- Remover a dependência 'spring-boot-starter-web'
+
+- Criar um profile para o Tomcat
+
+  ...
+  <profiles>
+    <!-- TOMCAT -->
+    <profile>
+      <id>tomcat</id>
+      <build>
+        <finalName>SpringBootTomcat</finalName>
+      </build>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+  ...
+
+- Criar um profile para o Jetty
+
+  ...
+    <!-- JETTY -->
+    <profile>
+      <id>jetty</id>
+      <build>
+        <finalName>SpringBootJetty</finalName>
+      </build>      
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-tomcat</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  ...
+
+- Criar um profile para o Undertown
+
+  ...
+    <!-- UNDERTOW -->
+    <profile>
+      <id>undertow</id>
+      <build>
+        <finalName>SpringBootUndertow</finalName>
+      </build>      
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-tomcat</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  ...
+
+
+Criando launchers
+----------------------------------------------------------------------------------------------------
+- Selecionar o menu Run > Run configurations...
+
+- Selecionar o item 'Maven Build', botão direito selecionar 'New Configuration'
+
+  - Definindo um launcher para empacotar a aplicação
+
+    - Preencher os campos abaixo:
+
+      Name: spring-boot-embeddedservers-tomcat-PACK
+      Base directory: ${workspace_loc:/spring-boot-embeddedservers}
+      Goals: package
+      profile: tomcat
+
+  - Definindo um launcher para executar a aplicação
+
+    - Preencher os campos abaixo:
+
+      Name: spring-boot-embeddedservers-tomcat-RUN
+      Base directory: ${workspace_loc:/spring-boot-embeddedservers}
+      Goals: spring-boot:run
+      profile: tomcat
+  
+
+Executando pelo Maven
+----------------------------------------------------------------------------------------------------
+- mvn -P tomcat spring-boot:run
+- mvn -P jetty spring-boot:run
+- mvn -P undertow spring-boot:run
+
+
